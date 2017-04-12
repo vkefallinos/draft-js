@@ -64,6 +64,13 @@ export type DraftEditorProps = {
   // Function that returns a cx map corresponding to block-level styles.
   blockStyleFn?: (block: ContentBlock) => string,
 
+  // Function that returns a list of custom rendered blocks
+  contentRendererFn?: (
+    blockRendererFn: Function,
+    blockStyleFn: Function,
+    editorState: EditorState,
+    textDirectionality?: BidiDirection
+  )=> ?Array<Object>,
   // A function that accepts a synthetic key event and returns
   // the matching DraftEditorCommand constant, or a custom string,
   // or null if no command should be invoked.

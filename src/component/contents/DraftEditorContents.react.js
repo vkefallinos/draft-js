@@ -28,6 +28,7 @@ import type ContentBlock from 'ContentBlock';
 type Props = {
   blockRendererFn: Function,
   contentRendererFn: Function,
+  leafRendererFn: Function,
   blockStyleFn: (block: ContentBlock) => string,
   editorState: EditorState,
   textDirectionality?: BidiDirection,
@@ -96,12 +97,22 @@ class DraftEditorContents extends React.Component {
     const {
       blockRenderMap,
       blockRendererFn,
+      blockStyleFn,
       contentRendererFn,
+      leafRendererFn,
       customStyleMap,
       customStyleFn,
       editorState,
     } = this.props;
-    const customContentBlocks = contentRendererFn(this.props)
+    const customContentBlocks = contentRendererFn({
+      blockRenderMap,
+      blockRendererFn,
+      blockStyleFn,
+      leafRendererFn,
+      customStyleMap,
+      customStyleFn,
+      editorState,
+    })
     if (customContentBlocks){
       return (<div data-contents="true">{customContentBlocks}</div>)
     }
@@ -139,6 +150,7 @@ class DraftEditorContents extends React.Component {
         blockProps: customProps,
         customStyleMap,
         customStyleFn,
+        leafRendererFn,
         decorator,
         direction,
         forceSelection,

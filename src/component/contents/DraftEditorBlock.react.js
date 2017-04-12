@@ -148,6 +148,7 @@ class DraftEditorBlock extends React.Component {
             styleSet={block.getInlineStyleAt(start)}
             customStyleMap={this.props.customStyleMap}
             customStyleFn={this.props.customStyleFn}
+            leafRendererFn={this.props.leafRendererFn}
             isLast={ii === lastLeafSet && jj === lastLeaf}
           />
         );
