@@ -50,7 +50,7 @@ function getEntityKeyForSelection(contentState: ContentState, targetSelection: S
  */
 function filterKey(entityMap: EntityMap, entityKey: ?string): ?string {
   if (entityKey) {
-    var entity = entityMap.__get(entityKey);
+    var entity = entityMap.get(entityKey);
     return entity.getMutability() === 'MUTABLE' ? entityKey : null;
   }
   return null;

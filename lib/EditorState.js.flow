@@ -474,7 +474,7 @@ function regenerateTreeForNewBlocks(editorState: EditorState, newBlockMap: Block
  */
 function regenerateTreeForNewDecorator(content: ContentState, blockMap: BlockMap, previousTreeMap: OrderedMap<string, List<any>>, decorator: DraftDecoratorType, existingDecorator: DraftDecoratorType): OrderedMap<string, List<any>> {
   return previousTreeMap.merge(blockMap.toSeq().filter(block => {
-    return decorator.getDecorations(block, content) !== existingDecorator.getDecorations(block, content);
+    return decorator.getDecorations(content, block) !== existingDecorator.getDecorations(content, block);
   }).map(block => BlockTree.generate(content, block, decorator)));
 }
 
