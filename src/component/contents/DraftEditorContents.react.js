@@ -27,6 +27,8 @@ import type ContentBlock from 'ContentBlock';
 
 type Props = {
   blockRendererFn: Function,
+  contentRendererFn: Function,
+  leafRendererFn: Function,
   blockStyleFn: (block: ContentBlock) => string,
   editorState: EditorState,
 };
@@ -94,17 +96,30 @@ class DraftEditorContents extends React.Component {
     const {
       blockRenderMap,
       blockRendererFn,
+      blockStyleFn,
+      contentRendererFn,
+      leafRendererFn,
       customStyleMap,
       customStyleFn,
       editorState,
     } = this.props;
-
+    const customContentBlocks = contentRendererFn({
+      blockRenderMap,
+      blockRendererFn,
+      blockStyleFn,
+      leafRendererFn,
+      customStyleMap,
+      customStyleFn,
+      editorState,
+    })
+    if (customContentBlocks){
+      return (<div data-contents="true">{customContentBlocks}</div>)
+    }
     const content = editorState.getCurrentContent();
     const selection = editorState.getSelection();
     const forceSelection = editorState.mustForceSelection();
     const decorator = editorState.getDecorator();
     const directionMap = nullthrows(editorState.getDirectionMap());
-
     const blocksAsArray = content.getBlocksAsArray();
     const processedBlocks = [];
     let currentDepth = null;
@@ -131,6 +146,7 @@ class DraftEditorContents extends React.Component {
         blockProps: customProps,
         customStyleMap,
         customStyleFn,
+        leafRendererFn,
         decorator,
         direction,
         forceSelection,

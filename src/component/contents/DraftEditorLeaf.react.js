@@ -33,6 +33,9 @@ type Props = {
   // Function that maps style names to CSS style objects.
   customStyleFn: Function,
 
+  // Function that renders leaf
+  leafRendererFn: Function,
+
   // Whether to force the DOM selection after render.
   forceSelection: boolean,
 
@@ -100,7 +103,8 @@ class DraftEditorLeaf extends React.Component {
     } else if (child.tagName === 'BR') {
       targetNode = node;
     } else {
-      targetNode = child.firstChild;
+      // Make sure it finds a text element
+      targetNode = node.querySelector("[data-text]").firstChild;
     }
 
     setDraftEditorSelection(selection, targetNode, blockKey, start, end);
@@ -123,8 +127,19 @@ class DraftEditorLeaf extends React.Component {
   }
 
   render(): React.Element<any> {
-    const {block} = this.props;
+    const {leafRendererFn} = this.props
     let {text} = this.props;
+    const RenderedLeaf = leafRendererFn(this.props)
+    if(RenderedLeaf){
+      return (
+          <RenderedLeaf
+            ref="leaf"
+          >
+            <DraftEditorTextNode >{text}</DraftEditorTextNode>
+          </RenderedLeaf>
+      )
+    }
+    const {block} = this.props;
 
     // If the leaf is at the end of its block and ends in a soft newline, append
     // an extra line feed character. Browsers collapse trailing newline
