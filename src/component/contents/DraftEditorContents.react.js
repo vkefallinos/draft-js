@@ -27,6 +27,7 @@ import type ContentBlock from 'ContentBlock';
 
 type Props = {
   blockRendererFn: Function,
+  contentRendererFn: Function,
   blockStyleFn: (block: ContentBlock) => string,
   editorState: EditorState,
   textDirectionality?: BidiDirection,
@@ -95,17 +96,20 @@ class DraftEditorContents extends React.Component {
     const {
       blockRenderMap,
       blockRendererFn,
+      contentRendererFn,
       customStyleMap,
       customStyleFn,
       editorState,
     } = this.props;
-
+    const customContentBlocks = contentRendererFn(this.props)
+    if (customContentBlocks){
+      return (<div data-contents="true">{customContentBlocks}</div>)
+    }
     const content = editorState.getCurrentContent();
     const selection = editorState.getSelection();
     const forceSelection = editorState.mustForceSelection();
     const decorator = editorState.getDecorator();
     const directionMap = nullthrows(editorState.getDirectionMap());
-
     const blocksAsArray = content.getBlocksAsArray();
     const processedBlocks = [];
     let currentDepth = null;

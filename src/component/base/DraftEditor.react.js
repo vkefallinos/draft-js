@@ -72,6 +72,7 @@ class DraftEditor extends React.Component {
   static defaultProps: DraftEditorDefaultProps = {
     blockRenderMap: DefaultDraftBlockRenderMap,
     blockRendererFn: emptyFunction.thatReturnsNull,
+    contentRendererFn: emptyFunction.thatReturnsNull,
     blockStyleFn: emptyFunction.thatReturns(''),
     keyBindingFn: getDefaultKeyBinding,
     readOnly: false,
@@ -278,6 +279,7 @@ class DraftEditor extends React.Component {
             <DraftEditorContents
               blockRenderMap={this.props.blockRenderMap}
               blockRendererFn={this.props.blockRendererFn}
+              contentRendererFn={this.props.contentRendererFn}
               blockStyleFn={this.props.blockStyleFn}
               customStyleMap={
                 {...DefaultDraftInlineStyle, ...this.props.customStyleMap}
