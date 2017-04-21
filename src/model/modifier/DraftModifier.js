@@ -184,7 +184,7 @@ var DraftModifier = {
     contentState = addOperationToContentState(
       contentState,
       "replaceWithFragment",
-      [...arguments, fragment]
+      [arguments[0], arguments[1], fragment]
     )
     var withoutEntities = removeEntitiesAtEdges(contentState, targetRange);
     var withoutText = removeRangeFromContentState(
