@@ -17,7 +17,6 @@ const DraftModifier = require('DraftModifier');
 const EditorState = require('EditorState');
 const SelectionState = require('SelectionState');
 
-const adjustBlockDepthForContentState = require('adjustBlockDepthForContentState');
 const nullthrows = require('nullthrows');
 
 import type ContentState from 'ContentState';
@@ -120,8 +119,8 @@ const RichTextEditorUtil = {
     var blockBefore = content.getBlockBefore(startKey);
 
     if (blockBefore && blockBefore.getType() === 'atomic') {
-      const blockMap = content.getBlockMap().delete(blockBefore.getKey());
-      var withoutAtomicBlock = content.merge({blockMap, selectionAfter: selection});
+      var withoutAtomicBlock = DraftModifier.removeBlockWithKey(content, blockBefore.getKey())
+
       if (withoutAtomicBlock !== content) {
         return EditorState.push(editorState, withoutAtomicBlock, 'remove-range');
       }
@@ -229,7 +228,7 @@ const RichTextEditorUtil = {
 
     maxDepth = Math.min(blockAbove.getDepth() + 1, maxDepth);
 
-    var withAdjustment = adjustBlockDepthForContentState(
+    var withAdjustment = DraftModifier.adjustBlockDepth(
       content,
       selection,
       event.shiftKey ? -1 : 1,

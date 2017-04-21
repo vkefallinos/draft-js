@@ -22,7 +22,6 @@ const SelectionState = require('SelectionState');
 const Immutable = require('immutable');
 
 const generateRandomKey = require('generateRandomKey');
-const moveBlockInContentState = require('moveBlockInContentState');
 
 import type {DraftInsertionType} from 'DraftInsertionType';
 
@@ -96,6 +95,7 @@ const AtomicBlockUtils = {
     insertionMode?: DraftInsertionType
   ): EditorState {
     const contentState = editorState.getCurrentContent();
+
     const selectionState = editorState.getSelection();
 
     let withMovedAtomicBlock;
@@ -107,7 +107,7 @@ const AtomicBlockUtils = {
           targetRange.getEndKey()
       );
 
-      withMovedAtomicBlock = moveBlockInContentState(
+      withMovedAtomicBlock = DraftModifier.moveBlock(
         contentState,
         atomicBlock,
         targetBlock,
@@ -126,14 +126,14 @@ const AtomicBlockUtils = {
       );
 
       if (selectionAfterRemoval.getStartOffset() === 0) {
-        withMovedAtomicBlock = moveBlockInContentState(
+        withMovedAtomicBlock = DraftModifier.moveBlock(
           afterRemoval,
           atomicBlock,
           targetBlock,
           'before'
         );
       } else if (selectionAfterRemoval.getEndOffset() === targetBlock.getLength()) {
-        withMovedAtomicBlock = moveBlockInContentState(
+        withMovedAtomicBlock = DraftModifier.moveBlock(
           afterRemoval,
           atomicBlock,
           targetBlock,
@@ -150,7 +150,7 @@ const AtomicBlockUtils = {
           selectionAfterSplit.getFocusKey()
         );
 
-        withMovedAtomicBlock = moveBlockInContentState(
+        withMovedAtomicBlock = DraftModifier.moveBlock(
           afterSplit,
           atomicBlock,
           targetBlock,
