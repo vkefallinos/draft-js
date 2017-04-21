@@ -1,0 +1,28 @@
+/**
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule insertFragmentIntoContentState
+ * @typechecks
+ * @flow
+ */
+
+'use strict';
+
+import type ContentState from 'ContentState';
+
+function addOperationToContentState(
+  contentState: ContentState,
+  name: String,
+  args: Array
+): ContentState {
+  return contentState.merge({
+    operations: contentState.getOperations().set(contentState.hashCode(), [name, args.slice(1)])
+  })
+}
+
+module.exports = addOperationToContentState
