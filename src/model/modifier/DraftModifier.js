@@ -60,7 +60,6 @@ var DraftModifier = {
   clearOperations: function(
     contentState: ContentState
   ): ContentState {
-    console.log(contentState)
     return contentState.merge({
       operations: OrderedMap({})
     })
@@ -74,8 +73,8 @@ var DraftModifier = {
     entityKey?: ?string
   ): ContentState {
     contentState = addOperationToContentState(
-      "replaceText",
       contentState,
+      "replaceText",
       [...arguments]
     )
     var withoutEntities = removeEntitiesAtEdges(contentState, rangeToReplace);
