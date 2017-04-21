@@ -16,11 +16,11 @@
 import type DraftEntityInstance from 'DraftEntityInstance';
 import type {EntityMap} from 'EntityMap';
 
-let key = 0;
 
 function addEntityToEntityMap(
   entityMap: EntityMap,
   instance: DraftEntityInstance,
+  key: string,
 ): EntityMap {
   return entityMap.set(`${++key}`, instance);
 }

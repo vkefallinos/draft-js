@@ -15,7 +15,6 @@
 
 var Immutable = require('immutable');
 
-var generateRandomKey = require('generateRandomKey');
 var invariant = require('invariant');
 
 import type ContentState from 'ContentState';
@@ -25,7 +24,8 @@ const {Map} = Immutable;
 
 function splitBlockInContentState(
   contentState: ContentState,
-  selectionState: SelectionState
+  selectionState: SelectionState,
+  keyBelow: String
 ): ContentState {
   invariant(
     selectionState.isCollapsed(),
@@ -45,7 +45,6 @@ function splitBlockInContentState(
     characterList: chars.slice(0, offset),
   });
 
-  var keyBelow = generateRandomKey();
   var blockBelow = blockAbove.merge({
     key: keyBelow,
     text: text.slice(offset),

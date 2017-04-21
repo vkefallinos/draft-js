@@ -26,6 +26,7 @@ function createEntityInContentState(
   type: DraftEntityType,
   mutability: DraftEntityMutability,
   data?: Object,
+  key: string,
 ): ContentState {
   return addEntityToContentState(
     contentState,

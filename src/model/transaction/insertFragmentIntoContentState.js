@@ -15,7 +15,6 @@
 
 var BlockMapBuilder = require('BlockMapBuilder');
 
-var generateRandomKey = require('generateRandomKey');
 var insertIntoList = require('insertIntoList');
 var invariant = require('invariant');
 
@@ -110,7 +109,7 @@ function insertFragmentIntoContentState(
       // Insert fragment blocks after the head and before the tail.
       fragment.slice(1, fragmentSize - 1).forEach(
         fragmentBlock => {
-          newBlockArr.push(fragmentBlock.set('key', generateRandomKey()));
+          newBlockArr.push(fragmentBlock);
         }
       );
 
@@ -118,7 +117,7 @@ function insertFragmentIntoContentState(
       var tailText = text.slice(targetOffset, blockSize);
       var tailCharacters = chars.slice(targetOffset, blockSize);
       var prependToTail = fragment.last();
-      finalKey = generateRandomKey();
+      finalKey = prependToTail.getKey();
 
       var modifiedTail = prependToTail.merge({
         key: finalKey,
