@@ -18,13 +18,10 @@ const CharacterMetadata = require('CharacterMetadata');
 const ContentBlock = require('ContentBlock');
 const Immutable = require('immutable');
 const SelectionState = require('SelectionState');
-
-const addEntityToContentState = require('addEntityToContentState');
-const createEntityInContentState = require('createEntityInContentState');
+const DraftModifier = require('DraftModifier')
 const invariant = require('invariant');
 const generateRandomKey = require('generateRandomKey');
 const sanitizeDraftText = require('sanitizeDraftText');
-const updateEntityDataInContentState = require('updateEntityDataInContentState');
 
 import type {BlockMap} from 'BlockMap';
 import type {EntityMap} from 'EntityMap';
@@ -35,11 +32,13 @@ import type {DraftEntityType} from 'DraftEntityType';
 const {List, Record, Repeat, OrderedMap} = Immutable;
 
 const defaultRecord: {
+  operations: ?OrderedMap,
   entityMap: ?EntityMap,
   blockMap: ?BlockMap,
   selectionBefore: ?SelectionState,
   selectionAfter: ?SelectionState,
 } = {
+  operations: OrderedMap({}),
   entityMap: null,
   blockMap: null,
   selectionBefore: null,
@@ -49,6 +48,10 @@ const defaultRecord: {
 const ContentStateRecord = Record(defaultRecord);
 
 class ContentState extends ContentStateRecord {
+
+  getOperations(): any {
+    return this.get('operations')
+  }
 
   getEntityMap(): any {
     return this.get('entityMap');
@@ -140,7 +143,7 @@ class ContentState extends ContentStateRecord {
     mutability: DraftEntityMutability,
     data?: Object,
   ): ContentState {
-    return createEntityInContentState(this, type, mutability, data);
+    return DraftModifier.createEntity(this, type, mutability, data);
   }
 
   mergeEntityData(
@@ -154,11 +157,11 @@ class ContentState extends ContentStateRecord {
     key: string,
     newData: {[key: string]: any},
   ): ContentState {
-    return updateEntityDataInContentState(this, key, newData, false);
+    return DraftModifier.replaceEntityData(this, key, newData, false);
   }
 
   addEntity(instance: DraftEntityInstance): ContentState {
-    return addEntityToContentState(this, instance);
+    return DraftModifier.addEntity(this, instance);
   }
 
   getEntity(key: string): DraftEntityInstance {
