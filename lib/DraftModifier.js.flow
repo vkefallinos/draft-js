@@ -63,6 +63,7 @@ var DraftModifier = {
 
   insertText: function (contentState: ContentState, targetRange: SelectionState, text: string, inlineStyle?: DraftInlineStyle, entityKey?: ?string): ContentState {
     invariant(targetRange.isCollapsed(), 'Target range must be collapsed for `insertText`.');
+    console.log(text);
     return DraftModifier.replaceText(contentState, targetRange, text, inlineStyle, entityKey);
   },
 
