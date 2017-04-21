@@ -32,12 +32,14 @@ import type {DraftEntityType} from 'DraftEntityType';
 const {List, Record, Repeat, OrderedMap} = Immutable;
 
 const defaultRecord: {
+  ot: ?boolean,
   operations: ?OrderedMap,
   entityMap: ?EntityMap,
   blockMap: ?BlockMap,
   selectionBefore: ?SelectionState,
   selectionAfter: ?SelectionState,
 } = {
+  ot: false,
   operations: OrderedMap({}),
   entityMap: null,
   blockMap: null,
@@ -48,6 +50,10 @@ const defaultRecord: {
 const ContentStateRecord = Record(defaultRecord);
 
 class ContentState extends ContentStateRecord {
+
+  isOTEnabled(): boolean {
+    return this.get('ot')
+  }
 
   getOperations(): any {
     return this.get('operations')

@@ -57,6 +57,20 @@ const {OrderedSet, OrderedMap} = Immutable;
  * These functions encapsulate some of the most common transaction sequences.
  */
 var DraftModifier = {
+  enableOT: function(
+    contentState: ContentState
+  ): ContentState {
+    return contentState.merge({
+      ot: true
+    })
+  },
+  disableOT: function(
+    contentState: ContentState
+  ): ContentState {
+    return contentState.merge({
+      ot: false
+    })
+  },
   clearOperations: function(
     contentState: ContentState
   ): ContentState {
@@ -72,6 +86,7 @@ var DraftModifier = {
     inlineStyle?: DraftInlineStyle,
     entityKey?: ?string
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "replaceText",
@@ -120,6 +135,7 @@ var DraftModifier = {
     targetBlock: ContentBlock,
     insertionMode?: DraftInsertionType
   ){
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "moveBlock",
@@ -164,6 +180,7 @@ var DraftModifier = {
         fragmentBlock:fragmentBlock.set('key', generateRandomKey());
       }
     );
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "replaceWithFragment",
@@ -189,6 +206,7 @@ var DraftModifier = {
   ): ContentState {
     // Check whether the selection state overlaps with a single entity.
     // If so, try to remove the appropriate substring of the entity text.
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "removeRange",
@@ -225,6 +243,7 @@ var DraftModifier = {
     if(!keyBelow){
       keyBelow = generateRandomKey()
     }
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "splitBlock",
@@ -248,6 +267,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     inlineStyle: string
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "applyInlineStyle",
@@ -265,6 +285,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     inlineStyle: string
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "removeInlineStyle",
@@ -289,6 +310,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     blockType: DraftBlockType
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "setBlockType",
@@ -306,6 +328,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     blockData: Map<any, any>,
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "setBlockData",
@@ -324,6 +347,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     blockData: Map<any, any>,
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "mergeBlockData",
@@ -342,6 +366,7 @@ var DraftModifier = {
     adjustment: number,
     maxDepth: number
   ){
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "adjustBlockDepth",
@@ -359,6 +384,7 @@ var DraftModifier = {
     key: string,
     newData: {[key: string]: any},
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "replaceEntityData",
@@ -383,6 +409,7 @@ var DraftModifier = {
         key = Number(lastKey)+1
       }
     }
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "createEntity",
@@ -405,6 +432,7 @@ var DraftModifier = {
         key = Number(lastKey)+1
       }
     }
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "addEntity",
@@ -418,6 +446,7 @@ var DraftModifier = {
     selectionState: SelectionState,
     entityKey: ?string
   ): ContentState {
+    if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
       "applyEntity",
