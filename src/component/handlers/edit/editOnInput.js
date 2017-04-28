@@ -103,6 +103,7 @@ function editOnInput(editor: DraftEditor): void {
     domText,
     block.getInlineStyleAt(start),
     preserveEntity ? block.getEntityAt(start) : null,
+    block.getMetaAt(start),
   );
 
   var anchorOffset, focusOffset, startOffset, endOffset;

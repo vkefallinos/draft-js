@@ -25,6 +25,7 @@ const sanitizeDraftText = require('sanitizeDraftText');
 
 import type {BlockMap} from 'BlockMap';
 import type {EntityMap} from 'EntityMap';
+import type {MetaMap} from 'MetaMap';
 import type DraftEntityInstance from 'DraftEntityInstance';
 import type {DraftEntityMutability} from 'DraftEntityMutability';
 import type {DraftEntityType} from 'DraftEntityType';
@@ -36,6 +37,7 @@ const defaultRecord: {
   operations: ?OrderedMap,
   entityMap: ?EntityMap,
   blockMap: ?BlockMap,
+  metaMap: ?MetaMap,
   selectionBefore: ?SelectionState,
   selectionAfter: ?SelectionState,
 } = {
@@ -43,6 +45,7 @@ const defaultRecord: {
   operations: OrderedMap({}),
   entityMap: null,
   blockMap: null,
+  metaMap: OrderedMap({}),
   selectionBefore: null,
   selectionAfter: null,
 };
@@ -65,6 +68,10 @@ class ContentState extends ContentStateRecord {
 
   getBlockMap(): BlockMap {
     return this.get('blockMap');
+  }
+
+  getMetaMap(): MetaMap {
+    return this.get('metaMap');
   }
 
   getSelectionBefore(): SelectionState {
@@ -136,6 +143,10 @@ class ContentState extends ContentStateRecord {
     return this.getEntityMap().keySeq().last();
   }
 
+  getLastCreatedMetaKey() {
+    return this.getMetaMap().keySeq().last();
+  }
+
   hasText(): boolean {
     var blockMap = this.getBlockMap();
     return (
@@ -156,7 +167,7 @@ class ContentState extends ContentStateRecord {
     key: string,
     toMerge: {[key: string]: any},
   ): ContentState {
-    return updateEntityDataInContentState(this, key, toMerge, true);
+    return DraftModifier.mergeEntityData(this, key, toMerge);
   }
 
   replaceEntityData(
@@ -173,6 +184,36 @@ class ContentState extends ContentStateRecord {
   getEntity(key: string): DraftEntityInstance {
     const instance = this.getEntityMap().get(key);
     invariant(!!instance, 'Unknown DraftEntity Key.');
+    return instance;
+  }
+
+  createMeta(
+    type: string,
+    data?: Object
+  ): ContentState {
+    return DraftModifier.createMeta(this, type, data)
+  }
+  mergeMetaData(
+    key: string,
+    toMerge: {[key: string]: any},
+  ): ContentState {
+    return DraftModifier.mergeMetaData(this, key, toMerge);
+  }
+
+  replaceMetaData(
+    key: string,
+    newData: {[key: string]: any},
+  ): ContentState {
+    return DraftModifier.replaceMetaData(this, key, newData, false);
+  }
+
+  addMeta(instance: DraftMetaInstance): ContentState {
+    return DraftModifier.addMeta(this, instance);
+  }
+
+  getMeta(key: string): DraftMetaInstance {
+    const instance = this.getMetaMap().get(key);
+    invariant(!!instance, 'Unknown DraftMeta Key.');
     return instance;
   }
 

@@ -23,17 +23,19 @@ import type {DraftInlineStyle} from 'DraftInlineStyle';
 
 // Immutable.map is typed such that the value for every key in the map
 // must be the same type
-type CharacterMetadataConfigValueType = DraftInlineStyle | ?string;
+type CharacterMetadataConfigValueType = DraftInlineStyle | ?string | ?Map;
 
 type CharacterMetadataConfig = {
   style?: CharacterMetadataConfigValueType,
   entity?: CharacterMetadataConfigValueType,
+  meta?: CharacterMetadataConfigValueType,
 };
 
 const EMPTY_SET = OrderedSet();
-
+const EMPTY_MAP = Map();
 var defaultRecord: CharacterMetadataConfig = {
   style: EMPTY_SET,
+  meta: EMPTY_MAP,
   entity: null,
 };
 
@@ -42,6 +44,14 @@ var CharacterMetadataRecord = Record(defaultRecord);
 class CharacterMetadata extends CharacterMetadataRecord {
   getStyle(): DraftInlineStyle {
     return this.get('style');
+  }
+
+  getStyleMeta(style: string): ?string {
+    return this.get('meta').get(style)
+  }
+
+  getMeta(): ?Map {
+    return this.get('meta')
   }
 
   getEntity(): ?string {
@@ -55,9 +65,11 @@ class CharacterMetadata extends CharacterMetadataRecord {
   static applyStyle(
     record: CharacterMetadata,
     style: string,
+    metaKey: ?string
   ): CharacterMetadata {
     var withStyle = record.set('style', record.getStyle().add(style));
-    return CharacterMetadata.create(withStyle);
+    var withStyleMeta = withStyle.set('meta', record.getMeta().set(style, metaKey))
+    return CharacterMetadata.create(withStyleMeta);
   }
 
   static removeStyle(
@@ -65,7 +77,10 @@ class CharacterMetadata extends CharacterMetadataRecord {
     style: string,
   ): CharacterMetadata {
     var withoutStyle = record.set('style', record.getStyle().remove(style));
-    return CharacterMetadata.create(withoutStyle);
+    var withoutStyleMeta = withoutStyle
+      .set('meta', record.getMeta()
+      .delete(style));
+    return CharacterMetadata.create(withoutStyleMeta);
   }
 
   static applyEntity(
@@ -90,7 +105,7 @@ class CharacterMetadata extends CharacterMetadataRecord {
     }
 
     const defaultConfig: CharacterMetadataConfig =
-      {style: EMPTY_SET, entity: (null: ?string)};
+      {style: EMPTY_SET, meta: EMPTY_MAP, entity: (null: ?string)};
 
     // Fill in unspecified properties, if necessary.
     var configMap = Map(defaultConfig).merge(config);

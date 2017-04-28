@@ -23,9 +23,10 @@ var ContentStateInlineStyle = {
   add: function(
     contentState: ContentState,
     selectionState: SelectionState,
-    inlineStyle: string
+    inlineStyle: string,
+    metaKey: ?string
   ): ContentState {
-    return modifyInlineStyle(contentState, selectionState, inlineStyle, true);
+    return modifyInlineStyle(contentState, selectionState, inlineStyle, metaKey, true);
   },
 
   remove: function(
@@ -33,7 +34,7 @@ var ContentStateInlineStyle = {
     selectionState: SelectionState,
     inlineStyle: string
   ): ContentState {
-    return modifyInlineStyle(contentState, selectionState, inlineStyle, false);
+    return modifyInlineStyle(contentState, selectionState, inlineStyle, null, false);
   },
 };
 
@@ -41,6 +42,7 @@ function modifyInlineStyle(
   contentState: ContentState,
   selectionState: SelectionState,
   inlineStyle: string,
+  metaKey: ?string,
   addOrRemove: boolean
 ): ContentState {
   var blockMap = contentState.getBlockMap();
@@ -72,7 +74,7 @@ function modifyInlineStyle(
         chars = chars.set(
           sliceStart,
           addOrRemove ?
-            CharacterMetadata.applyStyle(current, inlineStyle) :
+            CharacterMetadata.applyStyle(current, inlineStyle, metaKey) :
             CharacterMetadata.removeStyle(current, inlineStyle)
         );
         sliceStart++;

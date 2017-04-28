@@ -31,6 +31,7 @@ function createEntityInContentState(
   return addEntityToContentState(
     contentState,
     new DraftEntityInstance({type, mutability, data: data || {}}),
+    key,
   );
 }
 

@@ -22,7 +22,7 @@ function addEntityToEntityMap(
   instance: DraftEntityInstance,
   key: string,
 ): EntityMap {
-  return entityMap.set(`${++key}`, instance);
+  return entityMap.set(`${key}`, instance);
 }
 
 module.exports = addEntityToEntityMap;

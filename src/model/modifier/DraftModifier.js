@@ -32,6 +32,9 @@ var moveBlockInContentState = require('moveBlockInContentState');
 const updateEntityDataInContentState = require('updateEntityDataInContentState');
 const createEntityInContentState = require('createEntityInContentState');
 const addEntityToContentState = require('addEntityToContentState');
+const updateMetaDataInContentState = require('updateMetaDataInContentState');
+const createMetaInContentState = require('createMetaInContentState');
+const addMetaToContentState = require('addMetaToContentState');
 const adjustBlockDepthForContentState = require('adjustBlockDepthForContentState');
 
 var generateRandomKey = require('generateRandomKey');
@@ -84,7 +87,8 @@ var DraftModifier = {
     rangeToReplace: SelectionState,
     text: string,
     inlineStyle?: DraftInlineStyle,
-    entityKey?: ?string
+    entityKey?: ?string,
+    meta?: Immutable.Map
   ): ContentState {
     if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
@@ -100,6 +104,7 @@ var DraftModifier = {
     var character = CharacterMetadata.create({
       style: inlineStyle || OrderedSet(),
       entity: entityKey || null,
+      meta: meta || Immutable.Map()
     });
 
     return insertTextIntoContentState(
@@ -115,7 +120,8 @@ var DraftModifier = {
     targetRange: SelectionState,
     text: string,
     inlineStyle?: DraftInlineStyle,
-    entityKey?: ?string
+    entityKey?: ?string,
+    meta?: ?Immutable.Map,
   ): ContentState {
     invariant(
       targetRange.isCollapsed(),
@@ -126,7 +132,8 @@ var DraftModifier = {
       targetRange,
       text,
       inlineStyle,
-      entityKey
+      entityKey,
+      meta
     );
   },
   moveBlock: function(
@@ -265,7 +272,8 @@ var DraftModifier = {
   applyInlineStyle: function(
     contentState: ContentState,
     selectionState: SelectionState,
-    inlineStyle: string
+    inlineStyle: string,
+    metaKey: ?string
   ): ContentState {
     if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
@@ -276,7 +284,8 @@ var DraftModifier = {
     return ContentStateInlineStyle.add(
       contentState,
       selectionState,
-      inlineStyle
+      inlineStyle,
+      metaKey
     );
   },
 
@@ -379,7 +388,55 @@ var DraftModifier = {
       maxDepth
     )
   },
-  replaceEntityData: function(
+
+  createMeta: function(
+    contentState: ContentState,
+    type: string,
+    data?: Object,
+    key?: string
+  ): ContentState {
+    if(!key){
+      const metaMap = contentState.getMetaMap()
+      const lastKey = metaMap.keySeq().last()
+      if(!lastKey){
+        key = 1
+      }else{
+        key = Number(lastKey)+1
+      }
+    }
+    if(contentState.isOTEnabled())
+    contentState = addOperationToContentState(
+      contentState,
+      "createMeta",
+      [...arguments, key]
+    )
+    return createMetaInContentState(contentState, type, data, key);
+
+  },
+  addMeta: function(
+    contentState: ContentState,
+    instance: DraftMetaInstance,
+    key?: string
+  ): ContentState {
+    if(!key){
+      const metaMap = contentState.getMetaMap()
+      const lastKey = metaMap.keySeq().last()
+      if(!lastKey){
+        key = 1
+      }else{
+        key = Number(lastKey)+1
+      }
+    }
+    if(contentState.isOTEnabled())
+    contentState = addOperationToContentState(
+      contentState,
+      "addMeta",
+      [...arguments, key]
+    )
+    return addMetaToContentState(contentState, instance, key);
+  },
+
+  mergeMetaData: function(
     contentState: ContentState,
     key: string,
     newData: {[key: string]: any},
@@ -387,10 +444,24 @@ var DraftModifier = {
     if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
       contentState,
-      "replaceEntityData",
+      "mergeMetaData",
       [...arguments]
     )
-    return updateEntityDataInContentState(contentState, key, newData, false);
+    return updateMetaDataInContentState(contentState, key, newData, true);
+  },
+
+  replaceMetaData: function(
+    contentState: ContentState,
+    key: string,
+    newData: {[key: string]: any},
+  ): ContentState {
+    if(contentState.isOTEnabled())
+    contentState = addOperationToContentState(
+      contentState,
+      "replaceMetaData",
+      [...arguments]
+    )
+    return updateMetaDataInContentState(contentState, key, newData, false);
   },
 
   createEntity: function(
@@ -459,6 +530,35 @@ var DraftModifier = {
       entityKey
     );
   },
+
+  mergeEntityData: function(
+    contentState: ContentState,
+    key: string,
+    newData: {[key: string]: any},
+  ): ContentState {
+    if(contentState.isOTEnabled())
+    contentState = addOperationToContentState(
+      contentState,
+      "mergeEntityData",
+      [...arguments]
+    )
+    return updateEntityDataInContentState(contentState, key, newData, true);
+  },
+
+  replaceEntityData: function(
+    contentState: ContentState,
+    key: string,
+    newData: {[key: string]: any},
+  ): ContentState {
+    if(contentState.isOTEnabled())
+    contentState = addOperationToContentState(
+      contentState,
+      "replaceEntityData",
+      [...arguments]
+    )
+    return updateEntityDataInContentState(contentState, key, newData, false);
+  },
+
 };
 
 module.exports = DraftModifier;

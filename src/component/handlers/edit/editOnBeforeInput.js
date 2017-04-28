@@ -16,6 +16,7 @@ var BlockTree = require('BlockTree');
 var DraftModifier = require('DraftModifier');
 var EditorState = require('EditorState');
 var UserAgent = require('UserAgent');
+var Immutable = require('immutable');
 
 var getEntityKeyForSelection = require('getEntityKeyForSelection');
 var isSelectionAtLeafStart = require('isSelectionAtLeafStart');
@@ -54,14 +55,16 @@ function replaceText(
   editorState: EditorState,
   text: string,
   inlineStyle: DraftInlineStyle,
-  entityKey: ?string
+  entityKey: ?string,
+  meta: ?Immutable.Map
 ): EditorState {
   var contentState = DraftModifier.replaceText(
     editorState.getCurrentContent(),
     editorState.getSelection(),
     text,
     inlineStyle,
-    entityKey
+    entityKey,
+    meta
   );
   return EditorState.push(editorState, contentState, 'insert-characters');
 }
@@ -118,7 +121,8 @@ function editOnBeforeInput(editor: DraftEditor, e: SyntheticInputEvent): void {
         getEntityKeyForSelection(
           editorState.getCurrentContent(),
           editorState.getSelection()
-        )
+        ),
+        editorState.getCurrentMeta(),
       )
     );
     return;
@@ -132,7 +136,8 @@ function editOnBeforeInput(editor: DraftEditor, e: SyntheticInputEvent): void {
     getEntityKeyForSelection(
       editorState.getCurrentContent(),
       editorState.getSelection()
-    )
+    ),
+    editorState.getCurrentMeta(),
   );
 
   if (!mayAllowNative) {

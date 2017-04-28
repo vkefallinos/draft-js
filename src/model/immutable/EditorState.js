@@ -22,6 +22,7 @@ import type {BlockMap} from 'BlockMap';
 import type {DraftDecoratorType} from 'DraftDecoratorType';
 import type {DraftInlineStyle} from 'DraftInlineStyle';
 import type {EntityMap} from 'EntityMap';
+import type {MetaMap} from 'MetaMap';
 import type {List, OrderedMap} from 'immutable';
 import type {EditorChangeType} from 'EditorChangeType';
 
@@ -29,6 +30,7 @@ var {
   OrderedSet,
   Record,
   Stack,
+  Map,
 } = Immutable;
 
 type EditorStateRecordType = {
@@ -146,6 +148,7 @@ class EditorState {
             editorState,
             newContent.getBlockMap(),
             newContent.getEntityMap(),
+            newContent.getMetaMap(),
             decorator
           )
         );
@@ -240,7 +243,21 @@ class EditorState {
 
     return getInlineStyleForNonCollapsedSelection(content, selection);
   }
+  getCurrentMeta(): Map {
+    var override = this.getInlineStyleOverride();
+    if (override != null) {
+      return override;
+    }
 
+    var content = this.getCurrentContent();
+    var selection = this.getSelection();
+
+    if (selection.isCollapsed()) {
+      return getMetaForCollapsedSelection(content, selection);
+    }
+
+    return getMetaForNonCollapsedSelection(content, selection);
+  }
   getBlockTree(blockKey: string): List<any> {
     return this.getImmutable().getIn(['treeMap', blockKey]);
   }
@@ -533,9 +550,12 @@ function regenerateTreeForNewBlocks(
   editorState: EditorState,
   newBlockMap: BlockMap,
   newEntityMap: EntityMap,
+  newMetaMap: MetaMap,
   decorator?: ?DraftDecoratorType
 ): OrderedMap<string, List<any>> {
-  const contentState = editorState.getCurrentContent().set('entityMap', newEntityMap);
+  const contentState = editorState.getCurrentContent()
+    .set('entityMap', newEntityMap)
+    .set('metaMap', newMetaMap);
   var prevBlockMap = contentState.getBlockMap();
   var prevTreeMap = editorState.getImmutable().get('treeMap');
   return prevTreeMap.merge(
@@ -657,6 +677,71 @@ function lookUpwardForInlineStyle(
   }
 
   return OrderedSet();
+}
+
+function getMetaForCollapsedSelection(
+  content: ContentState,
+  selection: SelectionState
+): Map {
+  var startKey = selection.getStartKey();
+  var startOffset = selection.getStartOffset();
+  var startBlock = content.getBlockForKey(startKey);
+
+  // If the cursor is not at the start of the block, look backward to
+  // preserve the style of the preceding character.
+  if (startOffset > 0) {
+    return startBlock.getMetaAt(startOffset - 1);
+  }
+
+  // The caret is at position zero in this block. If the block has any
+  // text at all, use the style of the first character.
+  if (startBlock.getLength()) {
+    return startBlock.getMetaAt(0);
+  }
+
+  // Otherwise, look upward in the document to find the closest character.
+  return lookUpwardForMeta(content, startKey);
+}
+
+function getMetaForNonCollapsedSelection(
+  content: ContentState,
+  selection: SelectionState
+): Map {
+  var startKey = selection.getStartKey();
+  var startOffset = selection.getStartOffset();
+  var startBlock = content.getBlockForKey(startKey);
+
+  // If there is a character just inside the selection, use its style.
+  if (startOffset < startBlock.getLength()) {
+    return startBlock.getMetaAt(startOffset);
+  }
+
+  // Check if the selection at the end of a non-empty block. Use the last
+  // style in the block.
+  if (startOffset > 0) {
+    return startBlock.getMetaAt(startOffset - 1);
+  }
+
+  // Otherwise, look upward in the document to find the closest character.
+  return lookUpwardForMeta(content, startKey);
+}
+
+function lookUpwardForMeta(
+  content: ContentState,
+  fromKey: string
+): Map {
+  var previousBlock = content.getBlockBefore(fromKey);
+  var previousLength;
+
+  while (previousBlock) {
+    previousLength = previousBlock.getLength();
+    if (previousLength) {
+      return previousBlock.getMetaAt(previousLength - 1);
+    }
+    previousBlock = content.getBlockBefore(previousBlock.getKey());
+  }
+
+  return Map();
 }
 
 module.exports = EditorState;
