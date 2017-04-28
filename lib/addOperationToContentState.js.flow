@@ -8,12 +8,14 @@
  *
  * @providesModule addOperationToContentState
  * @typechecks
- * 
+ * @flow
  */
 
 'use strict';
 
-function addOperationToContentState(contentState, name, args) {
+import type ContentState from './ContentState';
+
+function addOperationToContentState(contentState: ContentState, name: string, args: Array<any>): ContentState {
   return contentState.merge({
     operations: contentState.getOperations().set(contentState.hashCode(), [name, args.slice(1)])
   });

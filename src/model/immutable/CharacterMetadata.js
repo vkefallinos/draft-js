@@ -22,8 +22,8 @@ var {
 import type {DraftInlineStyle} from 'DraftInlineStyle';
 
 // Immutable.map is typed such that the value for every key in the map
-// must be the same type
-type CharacterMetadataConfigValueType = DraftInlineStyle | ?string | ?Map;
+// must be the same type.
+type CharacterMetadataConfigValueType = DraftInlineStyle | ?string | Map<string, string>;
 
 type CharacterMetadataConfig = {
   style?: CharacterMetadataConfigValueType,
@@ -50,7 +50,7 @@ class CharacterMetadata extends CharacterMetadataRecord {
     return this.get('meta').get(style)
   }
 
-  getMeta(): ?Map {
+  getMeta(): Map {
     return this.get('meta')
   }
 
@@ -78,8 +78,7 @@ class CharacterMetadata extends CharacterMetadataRecord {
   ): CharacterMetadata {
     var withoutStyle = record.set('style', record.getStyle().remove(style));
     var withoutStyleMeta = withoutStyle
-      .set('meta', record.getMeta()
-      .delete(style));
+      .set('meta', record.getMeta().delete(style));
     return CharacterMetadata.create(withoutStyleMeta);
   }
 

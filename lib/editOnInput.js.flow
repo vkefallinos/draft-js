@@ -95,7 +95,7 @@ function editOnInput(editor: DraftEditor): void {
   // native browser undo.
   const changeType = preserveEntity ? 'spellcheck-change' : 'apply-entity';
 
-  const newContent = DraftModifier.replaceText(content, targetRange, domText, block.getInlineStyleAt(start), preserveEntity ? block.getEntityAt(start) : null);
+  const newContent = DraftModifier.replaceText(content, targetRange, domText, block.getInlineStyleAt(start), preserveEntity ? block.getEntityAt(start) : null, block.getMetaAt(start));
 
   var anchorOffset, focusOffset, startOffset, endOffset;
 

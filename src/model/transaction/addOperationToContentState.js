@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule insertFragmentIntoContentState
+ * @providesModule addOperationToContentState
  * @typechecks
  * @flow
  */
@@ -17,8 +17,8 @@ import type ContentState from 'ContentState';
 
 function addOperationToContentState(
   contentState: ContentState,
-  name: String,
-  args: Array
+  name: string,
+  args: Array<any>
 ): ContentState {
   return contentState.merge({
     operations: contentState.getOperations().set(contentState.hashCode(), [name, args.slice(1)])

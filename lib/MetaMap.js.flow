@@ -6,17 +6,12 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule addOperationToContentState
- * @typechecks
- * 
+ * @providesModule MetaMap
+ * @flow
  */
 
 'use strict';
 
-function addOperationToContentState(contentState, name, args) {
-  return contentState.merge({
-    operations: contentState.getOperations().set(contentState.hashCode(), [name, args.slice(1)])
-  });
-}
+import type { OrderedMap } from 'immutable';
 
-module.exports = addOperationToContentState;
+export type MetaMap = OrderedMap<string, string>;

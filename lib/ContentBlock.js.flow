@@ -28,6 +28,7 @@ var {
 } = Immutable;
 
 const EMPTY_SET = OrderedSet();
+const EMPTY_MAP = Map();
 
 var defaultRecord: {
   key: string;
@@ -86,6 +87,11 @@ class ContentBlock extends ContentBlockRecord {
     return character ? character.getEntity() : null;
   }
 
+  getMetaAt(offset: number): ?string {
+    var character = this.getCharacterList().get(offset);
+    return character ? character.getMeta() : EMPTY_MAP;
+  }
+
   /**
    * Execute a callback for every contiguous range of styles within the block.
    */
@@ -102,7 +108,7 @@ class ContentBlock extends ContentBlockRecord {
 }
 
 function haveEqualStyle(charA: CharacterMetadata, charB: CharacterMetadata): boolean {
-  return charA.getStyle() === charB.getStyle();
+  return charA.getStyle() === charB.getStyle() && charA.getMeta() === charB.getMeta();
 }
 
 function haveEqualEntity(charA: CharacterMetadata, charB: CharacterMetadata): boolean {

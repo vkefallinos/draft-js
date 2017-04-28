@@ -21,8 +21,8 @@ import type ContentState from './ContentState';
 import type { DraftEntityMutability } from './DraftEntityMutability';
 import type { DraftEntityType } from './DraftEntityType';
 
-function createEntityInContentState(contentState: ContentState, type: DraftEntityType, mutability: DraftEntityMutability, data?: Object): ContentState {
-  return addEntityToContentState(contentState, new DraftEntityInstance({ type, mutability, data: data || {} }));
+function createEntityInContentState(contentState: ContentState, type: DraftEntityType, mutability: DraftEntityMutability, data?: Object, key: string): ContentState {
+  return addEntityToContentState(contentState, new DraftEntityInstance({ type, mutability, data: data || {} }), key);
 }
 
 module.exports = createEntityInContentState;

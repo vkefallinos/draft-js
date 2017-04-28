@@ -6,18 +6,18 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule addEntityToEntityMap
+ * @providesModule addMetaToMetaMap
  * @typechecks
  * @flow
  */
 
 'use strict';
 
-import type DraftEntityInstance from './DraftEntityInstance';
-import type { EntityMap } from './EntityMap';
+import type DraftMetaInstance from './DraftMetaInstance';
+import type { MetaMap } from './MetaMap';
 
-function addEntityToEntityMap(entityMap: EntityMap, instance: DraftEntityInstance, key: string): EntityMap {
-  return entityMap.set(`${key}`, instance);
+function addMetaToMetaMap(metaMap: MetaMap, instance: DraftMetaInstance, key: string): MetaMap {
+  return metaMap.set(`${key}`, instance);
 }
 
-module.exports = addEntityToEntityMap;
+module.exports = addMetaToMetaMap;

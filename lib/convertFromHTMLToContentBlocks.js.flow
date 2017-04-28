@@ -330,7 +330,7 @@ function genFragment(entityMap: EntityMap, node: Node, inlineStyle: DraftInlineS
       type: 'IMAGE',
       mutability: 'MUTABLE',
       data: entityConfig || {}
-    }));
+    }), "");
     inEntity = newEntityMap.keySeq().last();
   }
 
@@ -386,7 +386,7 @@ function genFragment(entityMap: EntityMap, node: Node, inlineStyle: DraftInlineS
         type: 'LINK',
         mutability: 'MUTABLE',
         data: entityConfig || {}
-      }));
+      }), "");
       entityId = newEntityMap.keySeq().last();
     } else {
       entityId = undefined;

@@ -41,9 +41,15 @@ var generateRandomKey = require('generateRandomKey');
 
 import type {BlockMap} from 'BlockMap';
 import type ContentState from 'ContentState';
+import type ContentBlock from 'ContentBlock';
 import type {DraftBlockType} from 'DraftBlockType';
+import type {DraftEntityType} from 'DraftEntityType';
+import type {DraftEntityMutability} from 'DraftEntityMutability';
 import type {DraftInlineStyle} from 'DraftInlineStyle';
+import type DraftEntityInstance from 'DraftEntityInstance';
+import type DraftMetaInstance from 'DraftMetaInstance';
 import type {DraftRemovalDirection} from 'DraftRemovalDirection';
+import type {DraftInsertionType} from 'DraftInsertionType';
 import type {Map} from 'immutable';
 import type SelectionState from 'SelectionState';
 
@@ -140,7 +146,7 @@ var DraftModifier = {
     contentState: ContentState,
     atomicBlock: ContentBlock,
     targetBlock: ContentBlock,
-    insertionMode?: DraftInsertionType
+    insertionMode: DraftInsertionType
   ){
     if(contentState.isOTEnabled())
     contentState = addOperationToContentState(
@@ -399,9 +405,9 @@ var DraftModifier = {
       const metaMap = contentState.getMetaMap()
       const lastKey = metaMap.keySeq().last()
       if(!lastKey){
-        key = 1
+        key = "1"
       }else{
-        key = Number(lastKey)+1
+        key = Number(lastKey)+1 +""
       }
     }
     if(contentState.isOTEnabled())
@@ -422,9 +428,9 @@ var DraftModifier = {
       const metaMap = contentState.getMetaMap()
       const lastKey = metaMap.keySeq().last()
       if(!lastKey){
-        key = 1
+        key = "1"
       }else{
-        key = Number(lastKey)+1
+        key = Number(lastKey)+1 +""
       }
     }
     if(contentState.isOTEnabled())
@@ -475,9 +481,9 @@ var DraftModifier = {
       const entityMap = contentState.getEntityMap()
       const lastKey = entityMap.keySeq().last()
       if(!lastKey){
-        key = 1
+        key = "1"
       }else{
-        key = Number(lastKey)+1
+        key = Number(lastKey)+1+""
       }
     }
     if(contentState.isOTEnabled())
@@ -498,9 +504,9 @@ var DraftModifier = {
       const entityMap = contentState.getEntityMap()
       const lastKey = entityMap.keySeq().last()
       if(!lastKey){
-        key = 1
+        key = "1"
       }else{
-        key = Number(lastKey)+1
+        key = Number(lastKey)+1 +""
       }
     }
     if(contentState.isOTEnabled())

@@ -27,6 +27,7 @@ import type {BlockMap} from 'BlockMap';
 import type {EntityMap} from 'EntityMap';
 import type {MetaMap} from 'MetaMap';
 import type DraftEntityInstance from 'DraftEntityInstance';
+import type DraftMetaInstance from 'DraftMetaInstance';
 import type {DraftEntityMutability} from 'DraftEntityMutability';
 import type {DraftEntityType} from 'DraftEntityType';
 

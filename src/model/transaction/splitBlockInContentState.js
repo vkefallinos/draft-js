@@ -25,7 +25,7 @@ const {Map} = Immutable;
 function splitBlockInContentState(
   contentState: ContentState,
   selectionState: SelectionState,
-  keyBelow: String
+  keyBelow: string
 ): ContentState {
   invariant(
     selectionState.isCollapsed(),

@@ -18,30 +18,35 @@ const CharacterMetadata = require('./CharacterMetadata');
 const ContentBlock = require('./ContentBlock');
 const Immutable = require('immutable');
 const SelectionState = require('./SelectionState');
-
-const addEntityToContentState = require('./addEntityToContentState');
-const createEntityInContentState = require('./createEntityInContentState');
+const DraftModifier = require('./DraftModifier');
 const invariant = require('fbjs/lib/invariant');
 const generateRandomKey = require('./generateRandomKey');
 const sanitizeDraftText = require('./sanitizeDraftText');
-const updateEntityDataInContentState = require('./updateEntityDataInContentState');
 
 import type { BlockMap } from './BlockMap';
 import type { EntityMap } from './EntityMap';
+import type { MetaMap } from './MetaMap';
 import type DraftEntityInstance from './DraftEntityInstance';
+import type DraftMetaInstance from './DraftMetaInstance';
 import type { DraftEntityMutability } from './DraftEntityMutability';
 import type { DraftEntityType } from './DraftEntityType';
 
 const { List, Record, Repeat, OrderedMap } = Immutable;
 
 const defaultRecord: {
+  ot: ?boolean;
+  operations: ?OrderedMap;
   entityMap: ?EntityMap;
   blockMap: ?BlockMap;
+  metaMap: ?MetaMap;
   selectionBefore: ?SelectionState;
   selectionAfter: ?SelectionState;
 } = {
+  ot: false,
+  operations: OrderedMap({}),
   entityMap: null,
   blockMap: null,
+  metaMap: OrderedMap({}),
   selectionBefore: null,
   selectionAfter: null
 };
@@ -50,12 +55,24 @@ const ContentStateRecord = Record(defaultRecord);
 
 class ContentState extends ContentStateRecord {
 
+  isOTEnabled(): boolean {
+    return this.get('ot');
+  }
+
+  getOperations(): any {
+    return this.get('operations');
+  }
+
   getEntityMap(): any {
     return this.get('entityMap');
   }
 
   getBlockMap(): BlockMap {
     return this.get('blockMap');
+  }
+
+  getMetaMap(): MetaMap {
+    return this.get('metaMap');
   }
 
   getSelectionBefore(): SelectionState {
@@ -109,30 +126,55 @@ class ContentState extends ContentStateRecord {
     return this.getEntityMap().keySeq().last();
   }
 
+  getLastCreatedMetaKey() {
+    return this.getMetaMap().keySeq().last();
+  }
+
   hasText(): boolean {
     var blockMap = this.getBlockMap();
     return blockMap.size > 1 || blockMap.first().getLength() > 0;
   }
 
   createEntity(type: DraftEntityType, mutability: DraftEntityMutability, data?: Object): ContentState {
-    return createEntityInContentState(this, type, mutability, data);
+    return DraftModifier.createEntity(this, type, mutability, data);
   }
 
   mergeEntityData(key: string, toMerge: { [key: string]: any }): ContentState {
-    return updateEntityDataInContentState(this, key, toMerge, true);
+    return DraftModifier.mergeEntityData(this, key, toMerge);
   }
 
   replaceEntityData(key: string, newData: { [key: string]: any }): ContentState {
-    return updateEntityDataInContentState(this, key, newData, false);
+    return DraftModifier.replaceEntityData(this, key, newData, false);
   }
 
   addEntity(instance: DraftEntityInstance): ContentState {
-    return addEntityToContentState(this, instance);
+    return DraftModifier.addEntity(this, instance);
   }
 
   getEntity(key: string): DraftEntityInstance {
     const instance = this.getEntityMap().get(key);
     invariant(!!instance, 'Unknown DraftEntity Key.');
+    return instance;
+  }
+
+  createMeta(type: string, data?: Object): ContentState {
+    return DraftModifier.createMeta(this, type, data);
+  }
+  mergeMetaData(key: string, toMerge: { [key: string]: any }): ContentState {
+    return DraftModifier.mergeMetaData(this, key, toMerge);
+  }
+
+  replaceMetaData(key: string, newData: { [key: string]: any }): ContentState {
+    return DraftModifier.replaceMetaData(this, key, newData, false);
+  }
+
+  addMeta(instance: DraftMetaInstance): ContentState {
+    return DraftModifier.addMeta(this, instance);
+  }
+
+  getMeta(key: string): DraftMetaInstance {
+    const instance = this.getMetaMap().get(key);
+    invariant(!!instance, 'Unknown DraftMeta Key.');
     return instance;
   }
 

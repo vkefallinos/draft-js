@@ -119,7 +119,12 @@ const RichTextEditorUtil = {
     var blockBefore = content.getBlockBefore(startKey);
 
     if (blockBefore && blockBefore.getType() === 'atomic') {
-      var withoutAtomicBlock = DraftModifier.removeBlockWithKey(content, blockBefore.getKey())
+      var withoutAtomicBlock = DraftModifier
+        .removeBlockWithKey(
+          content,
+          content.getSelectionAfter(),
+          blockBefore.getKey()
+        )
 
       if (withoutAtomicBlock !== content) {
         return EditorState.push(editorState, withoutAtomicBlock, 'remove-range');

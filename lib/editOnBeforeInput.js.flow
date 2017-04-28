@@ -16,6 +16,7 @@ var BlockTree = require('./BlockTree');
 var DraftModifier = require('./DraftModifier');
 var EditorState = require('./EditorState');
 var UserAgent = require('fbjs/lib/UserAgent');
+var Immutable = require('immutable');
 
 var getEntityKeyForSelection = require('./getEntityKeyForSelection');
 var isSelectionAtLeafStart = require('./isSelectionAtLeafStart');
@@ -45,8 +46,8 @@ function mustPreventDefaultForCharacter(character: string): boolean {
  * Replace the current selection with the specified text string, with the
  * inline style and entity key applied to the newly inserted text.
  */
-function replaceText(editorState: EditorState, text: string, inlineStyle: DraftInlineStyle, entityKey: ?string): EditorState {
-  var contentState = DraftModifier.replaceText(editorState.getCurrentContent(), editorState.getSelection(), text, inlineStyle, entityKey);
+function replaceText(editorState: EditorState, text: string, inlineStyle: DraftInlineStyle, entityKey: ?string, meta: ?Immutable.Map): EditorState {
+  var contentState = DraftModifier.replaceText(editorState.getCurrentContent(), editorState.getSelection(), text, inlineStyle, entityKey, meta);
   return EditorState.push(editorState, contentState, 'insert-characters');
 }
 
@@ -91,12 +92,12 @@ function editOnBeforeInput(editor: DraftEditor, e: SyntheticInputEvent): void {
 
   if (!selection.isCollapsed()) {
     e.preventDefault();
-    editor.update(replaceText(editorState, chars, editorState.getCurrentInlineStyle(), getEntityKeyForSelection(editorState.getCurrentContent(), editorState.getSelection())));
+    editor.update(replaceText(editorState, chars, editorState.getCurrentInlineStyle(), getEntityKeyForSelection(editorState.getCurrentContent(), editorState.getSelection()), editorState.getCurrentMeta()));
     return;
   }
 
   var mayAllowNative = !isSelectionAtLeafStart(editorState);
-  var newEditorState = replaceText(editorState, chars, editorState.getCurrentInlineStyle(), getEntityKeyForSelection(editorState.getCurrentContent(), editorState.getSelection()));
+  var newEditorState = replaceText(editorState, chars, editorState.getCurrentInlineStyle(), getEntityKeyForSelection(editorState.getCurrentContent(), editorState.getSelection()), editorState.getCurrentMeta());
 
   if (!mayAllowNative) {
     e.preventDefault();

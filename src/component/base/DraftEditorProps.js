@@ -19,6 +19,7 @@ import type {DraftEditorCommand} from 'DraftEditorCommand';
 import type {DraftTextAlignment} from 'DraftTextAlignment';
 import type {DraftInlineStyle} from 'DraftInlineStyle';
 import type {DraftHandleValue} from 'DraftHandleValue';
+import type {BidiDirection} from 'UnicodeBidiDirection';
 import type EditorState from 'EditorState';
 import type SelectionState from 'SelectionState';
 
@@ -57,6 +58,20 @@ export type DraftEditorProps = {
     editorState: EditorState,
     textDirectionality?: BidiDirection
   )=> ?Array<Object>,
+
+  leafRendererFn?: (
+    block: ContentBlock,
+    customStyleMap: Object,
+    customStyleFn: Function,
+    leafRendererFn: Function,
+    forceSelection: boolean,
+    isLast: boolean,
+    offsetKey: string,
+    selection: SelectionState,
+    start: number,
+    styleSet: DraftInlineStyle,
+    text: string,
+  )=> Object,
   // A function that accepts a synthetic key event and returns
   // the matching DraftEditorCommand constant, or a custom string,
   // or null if no command should be invoked.
@@ -153,6 +168,7 @@ export type DraftEditorProps = {
 export type DraftEditorDefaultProps = {
   blockRenderMap: DraftBlockRenderMap,
   blockRendererFn: (block: ContentBlock) => ?Object,
+  leafRendererFn: () => ?Object,
   blockStyleFn: (block: ContentBlock) => string,
   keyBindingFn: (e: SyntheticKeyboardEvent) => ?string,
   readOnly: boolean,
