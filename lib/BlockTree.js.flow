@@ -107,14 +107,18 @@ var BlockTree = {
  */
 function generateLeaves(characters: List<CharacterMetadata>, offset: number): List<LeafRange> {
   var leaves = [];
-  var inlineStyles = characters.map(c => c.getStyle()).toList();
-  findRangesImmutable(inlineStyles, areEqual, returnTrue, (start, end) => {
+  var inlineStyles = characters.map(c => List([c.getStyle(), c.getMeta()])).toList();
+  findRangesImmutable(inlineStyles, areEqualStyles, returnTrue, (start, end) => {
     leaves.push(new LeafRange({
       start: start + offset,
       end: end + offset
     }));
   });
   return List(leaves);
+}
+
+function areEqualStyles(a: List, b: List): boolean {
+  return a.hashCode() === b.hashCode();
 }
 
 function areEqual(a: any, b: any): boolean {
