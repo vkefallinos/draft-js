@@ -48,10 +48,12 @@ function getEncodedInlinesForType(
     isTruthy,
     (start, end) => {
       var text = block.getText();
+      const [styleName, key] = styleToEncode.split("--")
       ranges.push({
         offset: UnicodeUtils.strlen(text.slice(0, start)),
         length: UnicodeUtils.strlen(text.slice(start, end)),
-        style: styleToEncode,
+        style: styleName,
+        key
       });
     }
   );
@@ -66,7 +68,8 @@ function getEncodedInlinesForType(
 function encodeInlineStyleRanges(
   block: ContentBlock
 ): Array<InlineStyleRange> {
-  var styleList = block.getCharacterList().map(c => c.getStyle()).toList();
+  var styleList = block.getCharacterList()
+    .map(c => c.getStyle().map(s=>`${s}--${c.getStyleMeta(s)}`)).toList();
   var ranges = styleList
     .flatten()
     .toSet()

@@ -14,6 +14,7 @@
 
 import type {RawDraftContentBlock} from 'RawDraftContentBlock';
 import type {RawDraftEntity} from 'RawDraftEntity';
+import type {RawDraftMeta} from 'RawDraftMeta';
 
 /**
  * A type that represents a composed document as vanilla JavaScript objects,
@@ -27,4 +28,5 @@ import type {RawDraftEntity} from 'RawDraftEntity';
 export type RawDraftContentState = {
   blocks: Array<RawDraftContentBlock>,
   entityMap: {[key: string]: RawDraftEntity},
+  metaMap: {[key: string]: RawDraftMeta},
 };

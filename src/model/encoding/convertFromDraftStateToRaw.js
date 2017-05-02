@@ -68,6 +68,7 @@ function convertFromDraftStateToRaw(
   return {
     entityMap: flippedStorageMap,
     blocks: rawBlocks,
+    metaMap: contentState.getMetaMap().toJSON()
   };
 }
 

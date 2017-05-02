@@ -6,18 +6,17 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule InlineStyleRange
+ * @providesModule RawDraftMeta
  * @flow
  */
 
 'use strict';
 
+
 /**
- * A plain object representation of an inline style range.
+ * A plain object representation of an EntityInstance.
  */
-export type InlineStyleRange = {
-  style: string,
-  offset: number,
-  length: number,
-  key: ?string,
+export type RawDraftMeta = {
+  type: string,
+  data: ?{[key: string]: any},
 };

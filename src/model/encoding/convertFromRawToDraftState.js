@@ -15,12 +15,15 @@
 var ContentBlock = require('ContentBlock');
 var ContentState = require('ContentState');
 var DraftEntityInstance = require('DraftEntityInstance');
+var DraftMetaInstance = require('DraftMetaInstance');
 
 
 const addEntityToEntityMap = require('addEntityToEntityMap');
+const addMetaToMetaMap = require('addMetaToMetaMap');
 var createCharacterList = require('createCharacterList');
 var decodeEntityRanges = require('decodeEntityRanges');
 var decodeInlineStyleRanges = require('decodeInlineStyleRanges');
+var decodeStyleMetaRanges = require('decodeStyleMetaRanges');
 var generateRandomKey = require('generateRandomKey');
 var Immutable = require('immutable');
 var {OrderedMap} = Immutable;
@@ -32,10 +35,19 @@ var {Map} = Immutable;
 function convertFromRawToDraftState(
   rawState: RawDraftContentState
 ): ContentState {
-  var {blocks, entityMap} = rawState;
+  var {blocks, entityMap, metaMap} = rawState;
 
   var fromStorageToLocal = {};
-
+  const newMetaMap = Object.keys(metaMap).reduce(
+    (updatedMetaMap, storageKey) => {
+      var encodedMeta = metaMap[storageKey];
+      var {type, data} = encodedMeta;
+      const instance = new DraftMetaInstance({type, data: data || {}});
+      const tempMetaMap = addMetaToMetaMap(updatedMetaMap, instance, storageKey);
+      return tempMetaMap;
+    },
+    OrderedMap(),
+  )
   const newEntityMap = Object.keys(entityMap).reduce(
     (updatedEntityMap, storageKey) => {
       var encodedEntity = entityMap[storageKey];
@@ -69,6 +81,7 @@ function convertFromRawToDraftState(
       data = Map(data);
 
       var inlineStyles = decodeInlineStyleRanges(text, inlineStyleRanges);
+      var metas = decodeStyleMetaRanges(text, inlineStyleRanges)
 
       // Translate entity range keys to the DraftEntity map.
       var filteredEntityRanges = entityRanges
@@ -78,13 +91,13 @@ function convertFromRawToDraftState(
         });
 
       var entities = decodeEntityRanges(text, filteredEntityRanges);
-      var characterList = createCharacterList(inlineStyles, entities);
+      var characterList = createCharacterList(inlineStyles, entities, metas);
 
       return new ContentBlock({key, type, text, depth, characterList, data});
     }
   );
 
-  return ContentState.createFromBlockArray(contentBlocks, newEntityMap);
+  return ContentState.createFromBlockArray(contentBlocks, newEntityMap, newMetaMap);
 }
 
 module.exports = convertFromRawToDraftState;

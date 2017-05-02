@@ -47,7 +47,7 @@ class CharacterMetadata extends CharacterMetadataRecord {
   }
 
   getStyleMeta(style: string): ?string {
-    return this.get('meta').get(style)
+    return this.get('meta').get(style) || ""
   }
 
   getMeta(): Map {

@@ -18,15 +18,17 @@ var Immutable = require('immutable');
 
 import type {DraftInlineStyle} from 'DraftInlineStyle';
 
-var {List} = Immutable;
+var {List, Map} = Immutable;
 
 function createCharacterList(
   inlineStyles: Array<DraftInlineStyle>,
-  entities: Array<?string>
+  entities: Array<?string>,
+  metas: Array<?Map>,
 ): List<CharacterMetadata> {
   var characterArray = inlineStyles.map((style, ii) => {
     var entity = entities[ii];
-    return CharacterMetadata.create({style, entity});
+    var meta = metas[ii]
+    return CharacterMetadata.create({style, entity, meta});
   });
   return List(characterArray);
 }

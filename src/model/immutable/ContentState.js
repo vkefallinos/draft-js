@@ -221,6 +221,7 @@ class ContentState extends ContentStateRecord {
   static createFromBlockArray(
     blocks: Array<ContentBlock>,
     entityMap: ?OrderedMap,
+    metaMap: ?OrderedMap,
   ): ContentState {
     var blockMap = BlockMapBuilder.createFromArray(blocks);
     var selectionState = blockMap.isEmpty()
@@ -229,6 +230,7 @@ class ContentState extends ContentStateRecord {
     return new ContentState({
       blockMap,
       entityMap: entityMap || OrderedMap(),
+      metaMap: metaMap || OrderedMap(),
       selectionBefore: selectionState,
       selectionAfter: selectionState,
     });
